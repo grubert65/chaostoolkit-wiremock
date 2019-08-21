@@ -31,8 +31,9 @@ requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
 
 
-@unittest.skipIf(can_connect_to("localhost", 8080) is False, "Test skipped: wiremock server not running")
-class TestActions( unittest.TestCase):
+@unittest.skipIf(can_connect_to("localhost", 8080) is False,
+                 "Test skipped: wiremock server not running")
+class TestActions(unittest.TestCase):
 
     def test_wm_server_void_config(self):
         self.assertIsNone(get_wm_params({}))
@@ -49,23 +50,23 @@ class TestActions( unittest.TestCase):
         self.assertEqual(params['timeout'], 10)
 
     def test_wm_server_host_and_port_and_context_path(self):
-            params = get_wm_params({
-                "wiremock": {
-                    "host": "localhost",
-                    "port": 8080,
-                    "contextPath": "/contextPath",
-                    "timeout": 10
-                }
-            })
-            self.assertEqual(params['url'], "http://localhost:8080/contextPath")
-            self.assertEqual(params['timeout'], 10)
+        params = get_wm_params({
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080,
+                "contextPath": "/contextPath",
+                "timeout": 10
+            }
+        })
+        self.assertEqual(params['url'], "http://localhost:8080/contextPath")
+        self.assertEqual(params['timeout'], 10)
 
     def test_global_fixed_delay(self):
         self.assertEqual(global_fixed_delay(
             10,
             {
-                "wiremock":{
-                    "host":"localhost",
+                "wiremock": {
+                    "host": "localhost",
                     "port": 8080,
                 }
             }), 1)
@@ -78,12 +79,11 @@ class TestActions( unittest.TestCase):
                 "sigma": 0.1
             },
             {
-                "wiremock":{
-                    "host":"localhost",
+                "wiremock": {
+                    "host": "localhost",
                     "port": 8080,
                 }
             }), 1)
-
 
     def test_add_mappings(self):
         ids = add_mappings([{
@@ -97,66 +97,64 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
+            }
         }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080,
-           },
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080,
+            },
         })
 
         delete_mappings([{
-                "url":"/some/thing", 
-                "method":"GET"
-            }],
+            "url": "/some/thing",
+            "method": "GET"
+        }],
             {
-                "wiremock":{
-                   "host":"localhost",
-                   "port": 8080,
-              }
-            })
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080,
+                }
+        })
 
         self.assertTrue(isinstance(ids[0], str))
         self.assertTrue(ids[0] != -1)
 
-
     def test_populate_from_dir(self):
         ids = populate_from_dir(dir='/tmp', configuration={
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080,
-           },
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080,
+            },
         })
-        self.assertEqual(ids, []) # /tmp should not have valid mappings...
+        self.assertEqual(ids, [])  # /tmp should not have valid mappings...
 
         ids = populate_from_dir(dir='./tests/mappings', configuration={
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080,
-           },
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080,
+            },
         })
         self.assertEqual(len(ids), 2)
 
         reset({
-                "wiremock":{
-                   "host":"localhost",
-                   "port": 8080,
-              }
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080,
+            }
         })
         self.assertTrue(isinstance(ids[0], str))
         self.assertTrue(ids[0] != -1)
 
-
     def test_delete_mappings(self):
         self.assertEqual(reset(
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        }), 1)
-        ids_added=add_mappings([{
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
+            }), 1)
+        ids_added = add_mappings([{
             "request": {
                 "method": "GET",
                 "url": "/some/thing"
@@ -167,38 +165,37 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
-        }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        })
-        ids_deleted=delete_mappings([{
-                "url":"/some/thing", 
-                "method":"GET"
-            }],
-            {
-                "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-              }
             }
+        }],
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080
+            },
+        })
+        ids_deleted = delete_mappings([{
+            "url": "/some/thing",
+            "method": "GET"
+        }],
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                }
+        }
         )
         self.assertTrue(isinstance(ids_deleted[0], str))
         self.assertEqual(ids_added[0], ids_deleted[0])
-
 
     def test_fixed_delay(self):
         self.assertEqual(reset(
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        }), 1)
-        ids_added=add_mappings([{
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
+            }), 1)
+        ids_added = add_mappings([{
             "request": {
                 "method": "GET",
                 "url": "/some/thing"
@@ -209,51 +206,50 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
+            }
         }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080
+            },
         })
         delayed = fixed_delay(
             filter=[{
-                "url":"/some/thing",
-                "method":"GET"
+                "url": "/some/thing",
+                "method": "GET"
             }],
             fixedDelayMilliseconds=1000,
             configuration={
-               "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-               },
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
             })
         self.assertEqual(delayed[0]['id'], ids_added[0])
-        ids_deleted=delete_mappings([{
-                "url":"/some/thing", 
-                "method":"GET"
-            }],
+        ids_deleted = delete_mappings([{
+            "url": "/some/thing",
+            "method": "GET"
+        }],
             {
-                "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-              }
-            }
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                }
+        }
         )
         self.assertTrue(isinstance(ids_deleted[0], str))
         self.assertEqual(ids_added[0], ids_deleted[0])
 
-
     def test_random_delay(self):
         self.assertEqual(reset(
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        }), 1)
-        ids_added=add_mappings([{
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
+            }), 1)
+        ids_added = add_mappings([{
             "request": {
                 "method": "GET",
                 "url": "/some/thing"
@@ -264,18 +260,18 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
+            }
         }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080
+            },
         })
         delayed = random_delay(
             filter=[{
-                "url":"/some/thing",
-                "method":"GET"
+                "url": "/some/thing",
+                "method": "GET"
             }],
             delayDistribution={
                 "type": "lognormal",
@@ -283,36 +279,35 @@ class TestActions( unittest.TestCase):
                 "sigma": 0.4
             },
             configuration={
-               "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-               },
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
             })
         self.assertEqual(delayed[0]['id'], ids_added[0])
-        ids_deleted=delete_mappings([{
-                "url":"/some/thing", 
-                "method":"GET"
-            }],
+        ids_deleted = delete_mappings([{
+            "url": "/some/thing",
+            "method": "GET"
+        }],
             {
-                "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-              }
-            }
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                }
+        }
         )
         self.assertTrue(isinstance(ids_deleted[0], str))
         self.assertEqual(ids_added[0], ids_deleted[0])
 
-
     def test_chunked_dribble_delay(self):
         self.assertEqual(reset(
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        }), 1)
-        ids_added=add_mappings([{
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
+            }), 1)
+        ids_added = add_mappings([{
             "request": {
                 "method": "GET",
                 "url": "/some/thing"
@@ -323,56 +318,56 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
+            }
         }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080
+            },
         })
         delayed = chunked_dribble_delay(
             filter=[{
-                "url":"/some/thing",
-                "method":"GET"
+                "url": "/some/thing",
+                "method": "GET"
             }],
             chunkedDribbleDelay={
                 "numberOfChunks": 5,
                 "totalDuration": 1000
             },
             configuration={
-               "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-               },
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
             })
 
         self.assertEqual(delayed[0]['id'], ids_added[0])
-        self.assertEqual(delayed[0]['response']['chunkedDribbleDelay']['numberOfChunks'], 5)
-        ids_deleted=delete_mappings([{
-                "url":"/some/thing", 
-                "method":"GET"
-            }],
+        self.assertEqual(delayed[0]['response']
+                         ['chunkedDribbleDelay']['numberOfChunks'], 5)
+        ids_deleted = delete_mappings([{
+            "url": "/some/thing",
+            "method": "GET"
+        }],
             {
-                "wiremock":{
-                   "host":"localhost",
-                   "port": 8080
-              }
-            }
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                }
+        }
         )
         self.assertTrue(isinstance(ids_deleted[0], str))
         self.assertEqual(ids_added[0], ids_deleted[0])
 
-
     def test_down(self):
         self.assertEqual(reset(
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        }), 1)
-        ids_added=add_mappings([{
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
+            }), 1)
+        ids_added = add_mappings([{
             "request": {
                 "method": "GET",
                 "url": "/some/thing"
@@ -383,13 +378,13 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
+            }
         }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080
+            },
         })
         delayed = down(
             filter=[{
@@ -397,8 +392,8 @@ class TestActions( unittest.TestCase):
                 "url": "/some/thing"
             }],
             configuration={
-                "wiremock":{
-                    "host":"localhost",
+                "wiremock": {
+                    "host": "localhost",
                     "port": 8080,
                     "defaults": {
                         "down": {
@@ -409,18 +404,18 @@ class TestActions( unittest.TestCase):
                 },
             })
         self.assertEqual(delayed[0]['id'], ids_added[0])
-        self.assertEqual(delayed[0]['response']['chunkedDribbleDelay']['numberOfChunks'], 10)
-
+        self.assertEqual(delayed[0]['response']
+                         ['chunkedDribbleDelay']['numberOfChunks'], 10)
 
     def test_up(self):
         self.assertEqual(reset(
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
-        }), 1)
-        ids_added=add_mappings([{
+            {
+                "wiremock": {
+                    "host": "localhost",
+                    "port": 8080
+                },
+            }), 1)
+        ids_added = add_mappings([{
             "request": {
                 "method": "GET",
                 "url": "/some/thing"
@@ -431,13 +426,13 @@ class TestActions( unittest.TestCase):
                 "headers": {
                     "Content-Type": "text/plain"
                 }
-            } 
+            }
         }],
-        {
-           "wiremock":{
-               "host":"localhost",
-               "port": 8080
-           },
+            {
+            "wiremock": {
+                "host": "localhost",
+                "port": 8080
+            },
         })
         delayed = down(
             filter=[{
@@ -445,8 +440,8 @@ class TestActions( unittest.TestCase):
                 "url": "/some/thing"
             }],
             configuration={
-                "wiremock":{
-                    "host":"localhost",
+                "wiremock": {
+                    "host": "localhost",
                     "port": 8080,
                     "defaults": {
                         "down": {
@@ -456,7 +451,7 @@ class TestActions( unittest.TestCase):
                     }
                 },
             })
-            
+
         self.assertEqual(delayed[0]['id'], ids_added[0])
 
         reset_ids = up(
@@ -465,14 +460,16 @@ class TestActions( unittest.TestCase):
                 "url": "/some/thing"
             }],
             configuration={
-                "wiremock":{
-                    "host":"localhost",
+                "wiremock": {
+                    "host": "localhost",
                     "port": 8080
                 }
             })
+        self.assertEqual(len(reset_ids), 1)
+
         m = mappings({
-            "wiremock":{
-                "host":"localhost",
+            "wiremock": {
+                "host": "localhost",
                 "port": 8080
             }
         })

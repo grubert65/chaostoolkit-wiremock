@@ -8,11 +8,8 @@ import os
 import io
 
 
-with open('README.rst') as readme_file:
+with open('README.md') as readme_file:
     readme = readme_file.read()
-
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
 
 requirements = []
 with io.open('requirements.txt') as f:
@@ -21,6 +18,7 @@ with io.open('requirements.txt') as f:
 setup_requirements = ['pytest-runner', ]
 
 test_requirements = ['pytest', ]
+
 
 def get_version_from_package() -> str:
     path = os.path.join(os.path.dirname(__file__), "chaoswm/__init__.py")
@@ -31,6 +29,7 @@ def get_version_from_package() -> str:
                 token, version = line.split(" = ", 1)
                 version = version.replace("'", "").strip()
                 return version
+
 
 setup(
     author="Marco Masetti",
@@ -46,11 +45,12 @@ setup(
     ],
     description="chaostoolkit driver for wiremock",
     install_requires=requirements,
-    license="BSD license",
-    long_description=readme + '\n\n' + history,
+    license="Apache License, v2.0",
+    long_description=readme,
+    long_description_content_type="text/markdown",
     include_package_data=True,
     keywords='chaoswm',
-    name='chaoswm',
+    name='chaostoolkit-wiremock',
     packages=find_packages(include=['chaoswm']),
     setup_requires=setup_requirements,
     test_suite='tests',
